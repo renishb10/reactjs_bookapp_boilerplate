@@ -19,7 +19,13 @@ class App extends Component {
       title: '',
       rating: ''
     },
-    newBookModal: false
+    editBookData : {
+      id: '',
+      title: '',
+      rating: ''
+    },
+    newBookModal: false,
+    editBookModal: false
   }
 
   componentWillMount() {
@@ -60,6 +66,12 @@ class App extends Component {
     });
   }
 
+  toggleEditBookModal() {
+    this.setState({
+      editBookModal: !this.state.editBookModal
+    });
+  }
+
   addBook() {
     const { books } = this.state;
     let newBook = this.state.newBookData;
@@ -72,6 +84,25 @@ class App extends Component {
         title: '',
         rating: ''
       }
+    });
+  }
+
+  editBook(id, title, rating) {
+    this.setState({ 
+      editBookData: { id, title, rating },
+      editBookModal: !this.state.editBookModal
+    });
+  }
+
+  updateBook() {
+    const { books } = this.state;
+    let editBook = this.state.editBookData;
+    const targetIndex = books.findIndex(o => o.id === editBook.id);
+    books[targetIndex] = editBook;
+    console.log(books);
+    this.setState({ 
+      books,
+      editBookModal: false
     });
   }
 
@@ -89,7 +120,7 @@ class App extends Component {
             {book.rating}
           </td>
           <td>
-            <Button color="success" size="sm" className="mr-2">Edit</Button>
+            <Button color="success" size="sm" className="mr-2" onClick={this.editBook.bind(this, book.id, book.title, book.rating)}>Edit</Button>
             <Button color="danger" size="sm">Delete</Button>
           </td>
         </tr>
@@ -123,10 +154,37 @@ class App extends Component {
             </FormGroup>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.toggleNewBookModal.bind(this)} onClick={this.addBook.bind(this)}>Add Book</Button>{' '}
+            <Button color="primary" onClick={this.toggleNewBookModal.bind(this)} onClick={this.addBook.bind(this)}>Add Book</Button>
             <Button color="secondary" onClick={this.toggleNewBookModal.bind(this)}>Cancel</Button>
           </ModalFooter>
         </Modal>
+
+        <Modal isOpen={this.state.editBookModal} toggle={this.toggleEditBookModal.bind(this)}>
+          <ModalHeader toggle={this.toggleEditBookModal.bind(this)}>Add a new book</ModalHeader>
+          <ModalBody>
+            <FormGroup>
+              <Label for="title">Email</Label>
+              <Input type="text" name="title" id="title" value={this.state.editBookData.title} onChange={ e => {
+                let { editBookData } = this.state;
+                editBookData.title = e.target.value;
+                this.setState({ editBookData });
+              }} />
+            </FormGroup>
+            <FormGroup>
+              <Label for="rating">Rating</Label>
+              <Input type="text" name="rating" id="rating" value={this.state.editBookData.rating} onChange={ e => {
+                let { editBookData } = this.state;
+                editBookData.rating = e.target.value;
+                this.setState({ editBookData });
+              }}/>
+            </FormGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={this.toggleEditBookModal.bind(this)} onClick={this.updateBook.bind(this)}>Update Book</Button>
+            <Button color="secondary" onClick={this.toggleEditBookModal.bind(this)}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
+
         <Table>
           <thead>
             <tr>
