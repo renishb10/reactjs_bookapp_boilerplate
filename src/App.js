@@ -106,6 +106,15 @@ class App extends Component {
     });
   }
 
+  deleteBook(id) {
+    const { books } = this.state;
+    const targetIndex = books.findIndex(o => o.id === id);
+    books.splice(targetIndex, 1);
+    this.setState({
+      books
+    });
+  }
+
   render() {
     let books = this.state.books.map(book => {
       return (
@@ -121,7 +130,7 @@ class App extends Component {
           </td>
           <td>
             <Button color="success" size="sm" className="mr-2" onClick={this.editBook.bind(this, book.id, book.title, book.rating)}>Edit</Button>
-            <Button color="danger" size="sm">Delete</Button>
+            <Button color="danger" size="sm" onClick={this.deleteBook.bind(this, book.id)}>Delete</Button>
           </td>
         </tr>
       );
